@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: MIT
-
 pragma solidity ^0.8.0;
 
 contract HealthcareRecords {
-    address owner;
+    address public owner;
 
     struct Record {
         uint256 recordID;
@@ -14,8 +13,7 @@ contract HealthcareRecords {
     }
 
     mapping(uint256 => Record[]) private patientRecords;
-
-    mapping(address => bool) private authorizedProviders;
+    mapping(address => bool) public authorizedProviders;
 
     modifier onlyOwner() {
         require(msg.sender == owner, "Only owner can perform this function");
@@ -29,6 +27,7 @@ contract HealthcareRecords {
 
     constructor() {
         owner = msg.sender;
+        authorizedProviders[msg.sender] = true; 
     }
 
     function getOwner() public view returns (address) {
@@ -37,9 +36,7 @@ contract HealthcareRecords {
 
     function authorizeProvider(address provider) public onlyOwner {
         authorizedProviders[provider] = true;
-
     }
-
 
     function addRecord(uint256 patientID, string memory patientName, string memory diagnosis, string memory treatment) public onlyAuthorizedProvider {
         uint256 recordID = patientRecords[patientID].length + 1;
@@ -49,5 +46,4 @@ contract HealthcareRecords {
     function getPatientRecords(uint256 patientID) public view onlyAuthorizedProvider returns (Record[] memory) {
         return patientRecords[patientID];
     }
-
 }
